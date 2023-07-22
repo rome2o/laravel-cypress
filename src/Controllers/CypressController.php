@@ -33,7 +33,7 @@ class CypressController
         $provider = Auth::guard($guard)->getProvider();
         $user = $provider->retrieveById($userId);
 
-        Auth::guard($guard)->login($user);
+        return response()->json(Auth::guard($guard)->login($user));
     }
  
 
