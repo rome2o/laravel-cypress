@@ -27,10 +27,7 @@ class CypressServiceProvider extends ServiceProvider
                 ]);
             }
         }
-        else {
-            // TODO: Change this text later on
-            return $this->info('Cypress must be used in TESTING env only');
-        }
+        echo 'Laravel Cypress successfully excluded';
     }
 
     protected function addRoutes()
