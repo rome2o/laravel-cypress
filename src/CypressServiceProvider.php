@@ -27,7 +27,6 @@ class CypressServiceProvider extends ServiceProvider
                 ]);
             }
         }
-        echo 'Laravel Cypress successfully excluded';
     }
 
     protected function addRoutes()
