@@ -39,7 +39,7 @@ class CypressBoilerplateCommand extends Command
         if (!$this->isCypressInstalled()) {
             $this->requireCypressInstall();
 
-            return;
+            // return;
         }
 
         if (! $this->option('force') && $this->files->exists($this->cypressConfigPath())) {

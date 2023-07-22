@@ -12,17 +12,24 @@ class CypressServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             return;
         }
+        // TODO: Enable cypress provider through environment so we can set it in pipeline
+        if($this->app->environment('testing')) {
 
-        $this->addRoutes();
+            $this->addRoutes();
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/routes/cypress.php' => base_path('routes/cypress.php'),
-            ]);
+            if ($this->app->runningInConsole()) {
+                $this->publishes([
+                    __DIR__.'/routes/cypress.php' => base_path('routes/cypress.php'),
+                ]);
 
-            $this->commands([
-                CypressBoilerplateCommand::class,
-            ]);
+                $this->commands([
+                    CypressBoilerplateCommand::class,
+                ]);
+            }
+        }
+        else {
+            // TODO: Change this text later on
+            return $this->info('Cypress must be used in TESTING env only');
         }
     }
 
