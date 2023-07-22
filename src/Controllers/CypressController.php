@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+
 
 class CypressController
 {
@@ -25,37 +27,15 @@ class CypressController
             ->keyBy('name');
     }
 
-    public function login(Request $request)
+    public function login($userId, $guard = null)
     {
-        $attributes = $request->input('attributes', []);
+        $guard = $guard ?: config('auth.defaults.guard');
+        $provider = Auth::guard($guard)->getProvider();
+        $user = $provider->retrieveById($userId);
 
-        if (empty($attributes)) {
-            $user = $this->factoryBuilder(
-                $this->userClassName(),
-                $request->input('state', [])
-            )->create();
-        } else {
-            $user = app($this->userClassName())
-                ->newQuery()
-                ->where($attributes)
-                ->first();
-
-            if (!$user) {
-                $user = $this->factoryBuilder(
-                    $this->userClassName(),
-                    $request->input('state', [])
-                )->create($attributes);
-            }
-        }
-
-        $user->load($request->input('load', []));
-
-        return tap($user, function ($user) {
-            auth()->login($user);
-
-            $user->setHidden([])->setVisible([]);
-        });
+        Auth::guard($guard)->login($user);
     }
+ 
 
     public function currentUser()
     {
@@ -97,22 +77,22 @@ class CypressController
         return response()->json(csrf_token());
     }
 
-    public function runPhp(Request $request)
-    {
-        $code = $request->input('command');
+    // public function runPhp(Request $request)
+    // {
+    //     $code = $request->input('command');
 
-        if ($code[-1] !== ';') {
-            $code .= ';';
-        }
+    //     if ($code[-1] !== ';') {
+    //         $code .= ';';
+    //     }
 
-        if (!Str::contains($code, 'return')) {
-            $code = 'return ' . $code;
-        }
+    //     if (!Str::contains($code, 'return')) {
+    //         $code = 'return ' . $code;
+    //     }
 
-        return response()->json([
-            'result' => eval($code),
-        ]);
-    }
+    //     return response()->json([
+    //         'result' => eval($code),
+    //     ]);
+    // }
 
     protected function userClassName()
     {
